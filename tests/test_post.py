@@ -170,3 +170,18 @@ def test_rpath_symlink(mocker, testing_config):
     )
     # Should only be called on the actual binary, not its symlinks. (once per variant)
     assert mk_relative.call_count == 2
+
+@pytest.mark.skipif(on_win, reason="rpath fixup not done on Windows.")
+def test_rpath_symlink_reverse(mocker, testing_config):
+    if on_linux:
+        mk_relative = mocker.spy(post, "mk_relative_linux")
+    elif on_mac:
+        mk_relative = mocker.spy(post, "mk_relative_osx")
+    api.build(
+        os.path.join(metadata_dir, "_rpath_symlink_reverse"),
+        config=testing_config,
+        variants={"rpaths_patcher": ["patchelf", "LIEF"]},
+        activate=True,
+    )
+    # Should only be called on the actual binary, not its symlinks. (once per variant)
+    assert mk_relative.call_count == 2
