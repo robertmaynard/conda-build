@@ -10,20 +10,20 @@ build:
   rpaths_patcher: {{ rpaths_patcher }}
   script:
     - mkdir -p "${PREFIX}/lib"
-    - mkdir -p "${PREFIX}/lib/subfolder"
+    - mkdir -p "${PREFIX}/lib/sub/folder"
     - >
       < /dev/null ${CC} ${CPPFLAGS} ${CFLAGS} ${LDFLAGS}
-      -x c - -nostdlib -s -o "${PREFIX}/lib/subfolder/{{ lib_file }}" "-Wl,-rpath,\$ORIGIN/."
+      -x c - -nostdlib -s -o "${PREFIX}/lib/sub/folder/{{ lib_file }}" "-Wl,-rpath,${PREFIX}/lib"
       -shared -Wl,-soname,libthing.so.1  # [linux]
       -dynamiclib -install_name libthing.1.dylib  # [osx]
-    - ln -s "${PREFIX}/lib/subfolder/{{ lib_file }}" "${PREFIX}/lib/subfolder/libthing.so.1"  # [linux]
-    - ln -s "${PREFIX}/lib/subfolder/{{ lib_file }}" "${PREFIX}/lib/subfolder/libthing.1.dylib"  # [osx]
-    - ln -s "${PREFIX}/lib/subfolder/{{ lib_file }}" "${PREFIX}/lib/libthing.so.1"  # [linux]
-    - ln -s "${PREFIX}/lib/subfolder/{{ lib_file }}" "${PREFIX}/lib/libthing.1.dylib"  # [osx]
-    - ln -s "${PREFIX}/lib/subfolder/{{ lib_file }}" "${PREFIX}/lib/libthing.so"  # [linux]
-    - ln -s "${PREFIX}/lib/subfolder/{{ lib_file }}" "${PREFIX}/lib/libthing.dylib"  # [osx]
-    - ln -s "${PREFIX}/lib/subfolder/{{ lib_file }}" "${PREFIX}/lib/{{ lib_file }}"  # [linux]
-    - ln -s "${PREFIX}/lib/subfolder/{{ lib_file }}" "${PREFIX}/lib/{{ lib_file }}"  # [osx]
+    - ln -s "${PREFIX}/lib/sub/folder/{{ lib_file }}" "${PREFIX}/lib/sub/folder/libthing.so.1"  # [linux]
+    - ln -s "${PREFIX}/lib/sub/folder/{{ lib_file }}" "${PREFIX}/lib/sub/folder/libthing.1.dylib"  # [osx]
+    - ln -s "${PREFIX}/lib/sub/folder/{{ lib_file }}" "${PREFIX}/lib/libthing.so.1"  # [linux]
+    - ln -s "${PREFIX}/lib/sub/folder/{{ lib_file }}" "${PREFIX}/lib/libthing.1.dylib"  # [osx]
+    - ln -s "${PREFIX}/lib/sub/folder/{{ lib_file }}" "${PREFIX}/lib/libthing.so"  # [linux]
+    - ln -s "${PREFIX}/lib/sub/folder/{{ lib_file }}" "${PREFIX}/lib/libthing.dylib"  # [osx]
+    - ln -s "${PREFIX}/lib/sub/folder/{{ lib_file }}" "${PREFIX}/lib/{{ lib_file }}"  # [linux]
+    - ln -s "${PREFIX}/lib/sub/folder/{{ lib_file }}" "${PREFIX}/lib/{{ lib_file }}"  # [osx]
 
 requirements:
   build:
