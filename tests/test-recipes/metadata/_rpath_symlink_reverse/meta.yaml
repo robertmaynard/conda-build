@@ -22,6 +22,8 @@ build:
     - ln -s "${PREFIX}/lib/subfolder/{{ lib_file }}" "${PREFIX}/lib/libthing.1.dylib"  # [osx]
     - ln -s "${PREFIX}/lib/subfolder/{{ lib_file }}" "${PREFIX}/lib/libthing.so"  # [linux]
     - ln -s "${PREFIX}/lib/subfolder/{{ lib_file }}" "${PREFIX}/lib/libthing.dylib"  # [osx]
+    - ln -s "${PREFIX}/lib/subfolder/{{ lib_file }}" "${PREFIX}/lib/{{ lib_file }}"  # [linux]
+    - ln -s "${PREFIX}/lib/subfolder/{{ lib_file }}" "${PREFIX}/lib/{{ lib_file }}"  # [osx]
 
 requirements:
   build:
@@ -36,6 +38,8 @@ test:
       python -c '
       import os, lief
       lib = lief.parse(os.environ["PREFIX"] + "/lib/{{ lib_file }}")
-      assert {"$ORIGIN/."} == {e.rpath for e in lib.dynamic_entries if e.tag == lief.ELF.DYNAMIC_TAGS.RPATH}  # [linux]
-      assert {"@loader_path/"} == {command.path for command in lib.commands if command.command == lief.MachO.LOAD_COMMAND_TYPES.RPATH}  # [osx]
+      dynamic_entries = {str(entry) for entry in lib.dynamic_entries}  # [linux]
+      assert {"$ORIGIN/."} == {e.rpath for e in lib.dynamic_entries if e.tag == lief.ELF.DYNAMIC_TAGS.RPATH}, "$ORIGIN rpath not found in: " + str(dynamic_entries)  # [linux]
+      commands = {str(command) for command in lib.commands}  # [osx]
+      assert {"@loader_path/"} == {command.path for command in lib.commands if command.command == lief.MachO.LOAD_COMMAND_TYPES.RPATH}, "loader path not found in: " + str(commands)  # [osx]
       '
